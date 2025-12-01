@@ -324,29 +324,29 @@ INSERT INTO Matched_User VALUES (10, 22, FALSE);
 INSERT INTO Matched_User VALUES (1, 22, FALSE);
 INSERT INTO Matched_User VALUES (1, 2, FALSE);
 
-CREATE TABLE Matched_User_backup AS SELECT * FROM Matched_User;
+-- CREATE TABLE Matched_User_backup AS SELECT * FROM Matched_User;
 
-ALTER TABLE Matched_User
-DROP FOREIGN KEY Matched_User_ibfk_1,
-DROP FOREIGN KEY Matched_User_ibfk_2;
+-- ALTER TABLE Matched_User
+-- DROP FOREIGN KEY Matched_User_ibfk_1,
+-- DROP FOREIGN KEY Matched_User_ibfk_2;
 
-ALTER TABLE Matched_User
-ADD CONSTRAINT fk_matched_user_user
-FOREIGN KEY (User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE,
-ADD CONSTRAINT fk_matched_user_liked_user
-FOREIGN KEY (Liked_User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE;
+-- ALTER TABLE Matched_User
+-- ADD CONSTRAINT fk_matched_user_user
+-- FOREIGN KEY (User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE,
+-- ADD CONSTRAINT fk_matched_user_liked_user
+-- FOREIGN KEY (Liked_User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE;
 
-CREATE TABLE UserGames_backup AS SELECT * FROM UserGames;
+-- CREATE TABLE UserGames_backup AS SELECT * FROM UserGames;
 
-ALTER TABLE UserGames
-DROP FOREIGN KEY UserGames_ibfk_1,
-DROP FOREIGN KEY UserGames_ibfk_2;
+-- ALTER TABLE UserGames
+-- DROP FOREIGN KEY UserGames_ibfk_1,
+-- DROP FOREIGN KEY UserGames_ibfk_2;
 
-ALTER TABLE UserGames
-ADD CONSTRAINT fk_usergames_user
-FOREIGN KEY (User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE,
-ADD CONSTRAINT fk_usergames_games
-FOREIGN KEY (Game_Id) REFERENCES Game(Game_Id) ON DELETE CASCADE;
+-- ALTER TABLE UserGames
+-- ADD CONSTRAINT fk_usergames_user
+-- FOREIGN KEY (User_Id) REFERENCES `User`(User_Id) ON DELETE CASCADE,
+-- ADD CONSTRAINT fk_usergames_games
+-- FOREIGN KEY (Game_Id) REFERENCES Game(Game_Id) ON DELETE CASCADE;
 
-DROP TABLE IF EXISTS Matched_User_backup;
-DROP TABLE IF EXISTS UserGames_backup;
+-- DROP TABLE IF EXISTS Matched_User_backup;
+-- DROP TABLE IF EXISTS UserGames_backup;
