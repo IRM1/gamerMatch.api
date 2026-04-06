@@ -64,4 +64,19 @@ public interface MatchedUserRepository extends JpaRepository<MatchedUser, Matche
   @Transactional
   @Query("DELETE FROM MatchedUser mu WHERE mu.user1.userId = :userId OR mu.user2.userId = :userId")
   void deleteByUserId(@Param("userId") Integer userId);
+
+  @Query(
+      value =
+          """
+          SELECT COUNT(*)
+          FROM Matched_User mu
+          WHERE (
+              (mu.User_Id = :userId AND mu.Liked_User_Id = :otherUserId)
+              OR (mu.User_Id = :otherUserId AND mu.Liked_User_Id = :userId)
+          )
+          AND mu.Is_Matched = 1
+          """,
+      nativeQuery = true)
+  long countMatchedRelationship(
+      @Param("userId") Integer userId, @Param("otherUserId") Integer otherUserId);
 }

@@ -1,5 +1,6 @@
 package com.mew.demo.service;
 
+import com.mew.demo.dto.ProfileUpdateRequestDto;
 import com.mew.demo.dto.UserDto;
 import com.mew.demo.exception.EntityNotFoundException;
 import com.mew.demo.model.Game;
@@ -86,6 +87,8 @@ public class UserService {
 
     user.setFirstName(userDto.getFirstName());
     user.setLastName(userDto.getLastName());
+    user.setDob(userDto.getDob());
+    user.setEmail(userDto.getEmail());
     user.setGamertag(userDto.getGamertag());
     user.setPreferredConsole(consoleRepository.getReferenceById(userDto.getConsoleId()));
     user.setAboutUser(userDto.getAboutUser());
@@ -99,6 +102,60 @@ public class UserService {
         .collect(Collectors.toSet());
 
     user.setGames(games);
+
+    return UserDto.fromEntity(userRepository.save(user));
+  }
+
+  @Transactional(readOnly = true)
+  public List<UserDto> discoverUsers(Integer currentUserId, String query) {
+    List<User> users;
+
+    if (query == null || query.trim().isBlank()) {
+      users = userRepository.findDiscoverableUsers(currentUserId);
+    } else {
+      users = userRepository.searchDiscoverableUsers(currentUserId, query.trim());
+    }
+
+    return users.stream().map(UserDto::fromEntity).toList();
+  }
+
+  @Transactional
+  public UserDto updateProfile(Integer userId, ProfileUpdateRequestDto request)
+      throws EntityNotFoundException {
+    User user = getUserById(userId);
+
+    if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
+      user.setFirstName(request.getFirstName().trim());
+    }
+
+    if (request.getLastName() != null) {
+      user.setLastName(request.getLastName().trim());
+    }
+
+    if (request.getDob() != null) {
+      user.setDob(request.getDob());
+    }
+
+    if (request.getGamertag() != null && !request.getGamertag().isBlank()) {
+      user.setGamertag(request.getGamertag().trim());
+    }
+
+    if (request.getConsoleId() != null) {
+      user.setPreferredConsole(consoleRepository.getReferenceById(request.getConsoleId()));
+    }
+
+    if (request.getAboutUser() != null) {
+      user.setAboutUser(request.getAboutUser().trim());
+    }
+
+    if (request.getGameIds() != null) {
+      Set<Game> games = request.getGameIds().stream()
+          .map(gameId -> gameRepository.findById(gameId)
+              .orElseThrow(
+                  () -> new IllegalArgumentException("Game with ID " + gameId + " not found.")))
+          .collect(Collectors.toSet());
+      user.setGames(games);
+    }
 
     return UserDto.fromEntity(userRepository.save(user));
   }

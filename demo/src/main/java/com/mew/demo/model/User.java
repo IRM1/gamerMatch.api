@@ -14,7 +14,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
@@ -55,6 +57,10 @@ public class User {
   @Column(name = "Email", nullable = false, length = 50)
   private String email;
 
+  @JsonIgnore
+  @Column(name = "Password_Hash", nullable = true, length = 100)
+  private String passwordHash;
+
   @Column(name = "Gamertag", nullable = false, length = 25)
   private String gamertag;
 
@@ -85,6 +91,31 @@ public class User {
   @JsonIgnore
   @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<MatchedUser> receivedLikes = new HashSet<>();
+
+  @Builder.Default
+  @JsonIgnore
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<UserSession> sessions = new HashSet<>();
+
+  @Builder.Default
+  @JsonIgnore
+  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<DirectMessage> sentMessages = new HashSet<>();
+
+  @Builder.Default
+  @JsonIgnore
+  @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<DirectMessage> receivedMessages = new HashSet<>();
+
+  @Column(name = "Created_At")
+  private LocalDateTime createdAt;
+
+  @PrePersist
+  public void onCreate() {
+    if (createdAt == null) {
+      createdAt = LocalDateTime.now();
+    }
+  }
 
   public static User fromOptional(Optional<User> optionalUser, String identifier) {
 

@@ -62,6 +62,18 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, "Bad Request", request);
   }
 
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<Map<String, Object>> handleAuthenticationException(
+      AuthenticationException ex, HttpServletRequest request) {
+    return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, "Unauthorized", request);
+  }
+
+  @ExceptionHandler(ForbiddenOperationException.class)
+  public ResponseEntity<Map<String, Object>> handleForbiddenOperation(
+      ForbiddenOperationException ex, HttpServletRequest request) {
+    return buildErrorResponse(ex, HttpStatus.FORBIDDEN, "Forbidden", request);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleAllOtherExceptions(
       Exception ex, HttpServletRequest request) {
